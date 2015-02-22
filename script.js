@@ -1,5 +1,7 @@
 window.onload = init;
 myCanva = document.getElementById('myCanva');
+tableHeight = 500;
+tableWidth = 500;
 
 // Ajouter une table qui penche AWW YEAH (possibilite de flipper)
 
@@ -119,9 +121,9 @@ function Vector(x, y)
 	}
 }
 
-function testVectors()
+function testVectors(context)
 {
-	var test = new Vector(60, 80);
+	var test = new Vector(-60, -80);
 	console.log(test.magnitude());
 	
 	test.debugDraw(context, 250, 250);
