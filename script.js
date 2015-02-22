@@ -4,21 +4,86 @@ myCanva = document.getElementById('myCanva');
 // Ajouter une table qui penche AWW YEAH (possibilite de flipper)
 
 function init(){
-	console.log(myCanva);
 	var context = myCanva.getContext("2d");
-	console.log(context);
 	
-	var test = new Vector(60, 80);
-	console.log(test.magnitude());
+	context.beginPath();
+	context.rect(0, 0, 500, 500);
+	context.fillStyle = '#008833'
+	context.fill();
 	
-	test.debugDraw(context, 250, 250);
+	var ballz = [];
 	
-	var test2 = new Vector(5, 5);
-	console.log(test.add(test2));
+	for(var x = 0; x <= 15; x++)
+	{
+		var randX = (Math.random() * 460) + 20;
+		var randY = (Math.random() * 460) + 20;
+		
+		ballz[x] = new Ball(randX, randY, x);
+		ballz[x].draw(context);
+	}
 }
 
+function Ball(posX, posY, num)
+{
+	this.pos = new Vector(posX, posY);
+	this.num = num;
+	
+	this.draw = function(ctx)
+	{
+		// Fill ball color
+		ctx.beginPath();
+		ctx.fillStyle = Ball.colors[this.num][0];
+		ctx.arc(this.pos.x, this.pos.y, Ball.RADIUS, 0, 2 * Math.PI);
+		ctx.fill();
+		
+		if (this.num != 0)
+		{
+			//Fill stripe
+			ctx.beginPath()
+			ctx.fillStyle = Ball.colors[this.num][1];
+			ctx.arc(this.pos.x, this.pos.y, Ball.RADIUS, Math.PI / 6, 5 * (Math.PI / 6));
+			ctx.fill();
+			
+			ctx.beginPath()
+			ctx.arc(this.pos.x, this.pos.y, Ball.RADIUS, 7 * Math.PI / 6, 11 * (Math.PI / 6));
+			ctx.fill();
+			
+			// Fill white number highlight
+			ctx.beginPath();
+			ctx.fillStyle = '#FFF';
+			ctx.arc(this.pos.x, this.pos.y, 7, 0, 2 * Math.PI);
+			ctx.fill();
+			ctx.stroke();
+			
+			// Ball number
+			ctx.beginPath();
+			ctx.fillStyle = '#000';
+			ctx.textAlign = 'center';
+			ctx.fillText(this.num, this.pos.x, this.pos.y + 2.5);
+		}
+	}
+}
+Ball.RADIUS = 18;
+Ball.colors = [['#FFF', '#FFF'],
+			   ['#F2C103', '#F2C103'],
+			   ['#041171', '#041171'],
+			   ['#D81501', '#D81501'],
+			   ['#090A43', '#090A43'],
+			   ['#F67A32', '#F67A32'],
+			   ['#066D42', '#066D42'],
+			   ['#7F0900', '#7F0900'],
+			   ['#000', '#000'],
+			   ['#F2C103', '#FFF'],
+			   ['#041171', '#FFF'],
+			   ['#D81501', '#FFF'],
+			   ['#090A43', '#FFF'],
+			   ['#F67A32', '#FFF'],
+			   ['#066D42', '#FFF'],
+			   ['#7F0900', '#FFF']
+			  ];
 function Vector(x, y)
 {
+	// changer pour un set de fonctions qui travaillent avec array associatifs 2D
 	this.x = x;
 	this.y = y;
 	
@@ -52,4 +117,15 @@ function Vector(x, y)
 		
 		ctx.stroke();
 	}
+}
+
+function testVectors()
+{
+	var test = new Vector(60, 80);
+	console.log(test.magnitude());
+	
+	test.debugDraw(context, 250, 250);
+	
+	var test2 = new Vector(5, 5);
+	console.log(test.add(test2));
 }
