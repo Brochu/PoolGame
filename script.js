@@ -1,28 +1,54 @@
 window.onload = init;
 myCanva = document.getElementById('myCanva');
+ctx = myCanva.getContext("2d");
 tableHeight = 500;
 tableWidth = 500;
 
 // Ajouter une table qui penche AWW YEAH (possibilite de flipper)
+// wtf xD, a quoi on pensait ??!
+ballz = [];
+moving = [];
+	
 
 function init(){
-	var context = myCanva.getContext("2d");
+    ballz[0] = new Ball(250, 250, 0);
+    for(var x = 1; x <= 15; x++)
+    {
+	    var randX = (Math.random() * 460) + 20;
+	    var randY = (Math.random() * 460) + 20;
 	
-	context.beginPath();
-	context.rect(0, 0, 500, 500);
-	context.fillStyle = '#008833'
-	context.fill();
-	
-	var ballz = [];
-	
-	for(var x = 0; x <= 15; x++)
-	{
-		var randX = (Math.random() * 460) + 20;
-		var randY = (Math.random() * 460) + 20;
-		
-		ballz[x] = new Ball(randX, randY, x);
-		ballz[x].draw(context);
-	}
+    	ballz[x] = new Ball(randX, randY, x);
+    }
+
+    update();
+    setInterval(update, 1000);
+}
+
+function drawTable(){
+	ctx.beginPath();
+	ctx.rect(0, 0, 500, 500);
+	ctx.fillStyle = '#008833'
+	ctx.fill();
+}
+
+function drawStick(){
+    // Prochaine partie
+    ctx.rotate(Math.PI / 6);
+
+	ctx.beginPath();
+	ctx.rect(0, 0, 50, 50);
+	ctx.fillStyle = '#333333'
+	ctx.fill();
+
+    ctx.rotate(-1 * (Math.PI / 6));
+}
+
+function update(){
+    drawTable();
+
+    // To be replaced by function drawBallz
+    ballz[0].draw(ctx);
+    drawStick();
 }
 
 function Ball(posX, posY, num)
