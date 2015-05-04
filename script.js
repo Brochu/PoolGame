@@ -4,8 +4,10 @@ ctx = myCanva.getContext("2d");
 tableHeight = 500;
 tableWidth = 500;
 
-mouseX = 0;
-mouseY = 0;
+mouseX = -1;
+mouseY = -1;
+vref = new Vector(-10,0);
+vrefmag = vref.magnitude();
 
 // Ajouter une table qui penche AWW YEAH (possibilite de flipper)
 // wtf xD, a quoi on pensait ??!
@@ -52,12 +54,28 @@ function drawTable(){
 }
 
 function drawStick(){
+    if (mouseX == -1 || mouseY == -1)
+        return
+
+    stickWidth = 10;
+    stickLength = 200;
+
     // Trouver l'angle que fait la souris par rapport a la balle du jouer.
-    Vector
-    ctx.rotate(Math.PI / 6);
+    ballx = ballz[0].pos.x;
+    bally = ballz[0].pos.y;
+
+    v = ballz[0].pos.sub(new Vector(mouseX, mouseY));
+    theta = Math.acos(v.dotProduct(vref) / (v.magnitude() * vrefmag));
+    if (mouseY < bally)
+        theta = -theta;
+
+    // Transformations pour dessiner le baton a la bonne place
+    ctx.translate(ballx, bally);
+    ctx.rotate(theta);
+    ctx.translate(30, (-0.5 * stickWidth));
 
     ctx.beginPath();
-    ctx.rect(0, 0, 100, 50);
+    ctx.rect(0, 0, stickLength, stickWidth);
     ctx.fillStyle = '#333333'
     ctx.fill();
 
@@ -146,6 +164,11 @@ function Vector(x, y)
     this.sub = function(v)
     {
         return new Vector(this.x - v.x, this.y - v.y);
+    }
+
+    this.dotProduct = function(v)
+    {
+        return this.x * v.x + this.y * v.y;
     }
 
     this.debugDraw = function(ctx, posX, posY)
