@@ -4,6 +4,9 @@ ctx = myCanva.getContext("2d");
 tableHeight = 500;
 tableWidth = 500;
 
+mouseX = 0;
+mouseY = 0;
+
 // Ajouter une table qui penche AWW YEAH (possibilite de flipper)
 // wtf xD, a quoi on pensait ??!
 ballz = [];
@@ -20,8 +23,25 @@ function init(){
     	ballz[x] = new Ball(randX, randY, x);
     }
 
+    myCanva.addEventListener('mousemove', updateMousePos, false);
+
+    // TODO: Separer la logique de mise a jour physique vs. redessiner le canvas
     update();
     setInterval(update, 1000);
+}
+
+function updateMousePos(e){
+    mouseX = e.offsetX;
+    mouseY = e.offsetY;
+    // console.log(mouseX + ' , ' + mouseY);
+}
+
+function update(){
+    drawTable();
+
+    // To be replaced by function drawBallz
+    ballz[0].draw(ctx);
+    drawStick();
 }
 
 function drawTable(){
@@ -41,14 +61,6 @@ function drawStick(){
     ctx.fill();
 
     ctx.setTransform(1,0,0,1,0,0);
-}
-
-function update(){
-    drawTable();
-
-    // To be replaced by function drawBallz
-    ballz[0].draw(ctx);
-    drawStick();
 }
 
 function Ball(posX, posY, num)
