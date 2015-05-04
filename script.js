@@ -8,7 +8,7 @@ tableWidth = 500;
 // wtf xD, a quoi on pensait ??!
 ballz = [];
 moving = [];
-	
+
 
 function init(){
     ballz[0] = new Ball(250, 250, 0);
@@ -16,7 +16,7 @@ function init(){
     {
 	    var randX = (Math.random() * 460) + 20;
 	    var randY = (Math.random() * 460) + 20;
-	
+
     	ballz[x] = new Ball(randX, randY, x);
     }
 
@@ -33,14 +33,14 @@ function drawTable(){
 
 function drawStick(){
     // Prochaine partie
-    ctx.rotate(Math.PI / 6);
+    ctx.rotate(Math.PI / 12);
 
-	ctx.beginPath();
-	ctx.rect(0, 0, 50, 50);
-	ctx.fillStyle = '#333333'
-	ctx.fill();
+    ctx.beginPath();
+    ctx.rect(0, 0, 50, 50);
+    ctx.fillStyle = '#333333'
+    ctx.fill();
 
-    ctx.rotate(-1 * (Math.PI / 6));
+    ctx.setTransform(1,0,0,1,0,0);
 }
 
 function update(){
@@ -55,7 +55,7 @@ function Ball(posX, posY, num)
 {
 	this.pos = new Vector(posX, posY);
 	this.num = num;
-	
+
 	this.draw = function(ctx)
 	{
 		// Fill ball color
@@ -63,7 +63,7 @@ function Ball(posX, posY, num)
 		ctx.fillStyle = Ball.colors[this.num][0];
 		ctx.arc(this.pos.x, this.pos.y, Ball.RADIUS, 0, 2 * Math.PI);
 		ctx.fill();
-		
+
 		if (this.num != 0)
 		{
 			//Fill stripe
@@ -71,18 +71,18 @@ function Ball(posX, posY, num)
 			ctx.fillStyle = Ball.colors[this.num][1];
 			ctx.arc(this.pos.x, this.pos.y, Ball.RADIUS, Math.PI / 6, 5 * (Math.PI / 6));
 			ctx.fill();
-			
+
 			ctx.beginPath()
 			ctx.arc(this.pos.x, this.pos.y, Ball.RADIUS, 7 * Math.PI / 6, 11 * (Math.PI / 6));
 			ctx.fill();
-			
+
 			// Fill white number highlight
 			ctx.beginPath();
 			ctx.fillStyle = '#FFF';
 			ctx.arc(this.pos.x, this.pos.y, 7, 0, 2 * Math.PI);
 			ctx.fill();
 			ctx.stroke();
-			
+
 			// Ball number
 			ctx.beginPath();
 			ctx.fillStyle = '#000';
@@ -114,35 +114,35 @@ function Vector(x, y)
 	// changer pour un set de fonctions qui travaillent avec array associatifs 2D
 	this.x = x;
 	this.y = y;
-	
+
 	this.magnitude = function()
 	{
 		return Math.sqrt((x*x) + (y*y));
 	}
-	
+
 	this.add = function(v)
 	{
 		return new Vector(this.x + v.x, this.y + v.y);
 	}
-	
+
 	this.debugDraw = function(ctx, posX, posY)
-	{	
+	{
 		// Thanks to http://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
 		var tox = posX + this.x;
 		var toy = posY + this.y;
-		
+
 		var headlength = 15;
 		var headAngle = Math.PI / 6;
 		var angle = Math.atan2(toy - posY, tox - posX);
-		
+
 		ctx.beginPath();
-		
+
 		ctx.moveTo(posX, posY);
 		ctx.lineTo(tox, toy)
 		ctx.lineTo(tox - headlength * Math.cos(angle - headAngle), toy - headlength * Math.sin(angle - headAngle));
 		ctx.moveTo(tox, toy);
 		ctx.lineTo(tox - headlength * Math.cos(angle + headAngle), toy - headlength * Math.sin(angle + headAngle));
-		
+
 		ctx.stroke();
 	}
 }
@@ -151,9 +151,9 @@ function testVectors(context)
 {
 	var test = new Vector(-60, -80);
 	console.log(test.magnitude());
-	
+
 	test.debugDraw(context, 250, 250);
-	
+
 	var test2 = new Vector(5, 5);
 	console.log(test.add(test2));
 }
