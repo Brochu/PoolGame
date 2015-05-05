@@ -12,6 +12,9 @@ function init(){
 	context.rect(0, 0, 500, 500);
 	context.fillStyle = '#008833'
 	context.fill();
+	context.strokeStyle = '#880011';
+	context.lineWidth = 40;
+	context.strokeRect(0, 0, 500, 500);
 	
 	var ballz = [];
 	
@@ -55,6 +58,8 @@ function Ball(posX, posY, num)
 			ctx.fillStyle = '#FFF';
 			ctx.arc(this.pos.x, this.pos.y, 7, 0, 2 * Math.PI);
 			ctx.fill();
+			ctx.strokeStyle = '#000';
+			ctx.lineWidth = 1;
 			ctx.stroke();
 			
 			// Ball number
