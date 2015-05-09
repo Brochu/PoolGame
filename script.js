@@ -1,5 +1,7 @@
 window.onload = init;
 myCanva = document.getElementById('myCanva');
+canvaPos = $(myCanva).offset();
+console.log(canvaPos);
 ctx = myCanva.getContext("2d");
 tableHeight = 500;
 tableWidth = 500;
@@ -15,7 +17,8 @@ ballz = [];
 moving = [];
 
 
-function init(){
+function init()
+{
     ballz[0] = new Ball(250, 250, 0);
     for(var x = 1; x <= 15; x++)
     {
@@ -29,16 +32,21 @@ function init(){
 
     // TODO: Separer la logique de mise a jour physique vs. redessiner le canvas
     update();
-    setInterval(update, 1000);
+    setInterval(update, 10);
 }
 
-function updateMousePos(e){
-    mouseX = e.offsetX;
-    mouseY = e.offsetY;
+function updateMousePos(e)
+{
+	// Offset fonctionne pas dans Firefox
+    /*mouseX = e.offsetX;
+    mouseY = e.offsetY;*/
+	mouseX = e.pageX - canvaPos.left;
+    mouseY = e.pageY - canvaPos.top;
     // console.log(mouseX + ' , ' + mouseY);
 }
 
-function update(){
+function update()
+{
     drawTable();
 
     // To be replaced by function drawBallz
@@ -46,26 +54,31 @@ function update(){
     drawStick();
 }
 
-function drawTable(){
+function drawTable()
+{
 	ctx.beginPath();
 	ctx.rect(0, 0, 500, 500);
 	ctx.fillStyle = '#008833'
 	ctx.fill();
 }
 
-function drawStick(){
+function drawStick()
+{
     if (mouseX == -1 || mouseY == -1)
         return
 
     stickWidth = 10;
     stickLength = 200;
 
-    // Trouver l'angle que fait la souris par rapport a la balle du jouer.
+    // Trouver l'angle que fait la souris par rapport a la balle du joueur.
     ballx = ballz[0].pos.x;
     bally = ballz[0].pos.y;
-
+	
+	// Position de la balle - position de la souris
     v = ballz[0].pos.sub(new Vector(mouseX, mouseY));
+	// Trouver l'angle du vecteur à partir d'un vecteur de référence
     theta = Math.acos(v.dotProduct(vref) / (v.magnitude() * vrefmag));
+	// Flipper l'angle du vecteur
     if (mouseY < bally)
         theta = -theta;
 
@@ -78,7 +91,8 @@ function drawStick(){
     ctx.rect(0, 0, stickLength, stickWidth);
     ctx.fillStyle = '#333333'
     ctx.fill();
-
+	
+	// Remet le canvas à sa position initiale
     ctx.setTransform(1,0,0,1,0,0);
 }
 
@@ -148,11 +162,14 @@ function Vector(x, y)
 
     this.magnitude = function()
     {
+		// Longueur du vecteur
         return Math.sqrt((x*x) + (y*y));
     }
 
     this.magnitudesqr = function()
     {
+		// On s'en fout de la longueur on veut juste savoir si y'a un vecteur plus long que l'autre
+		// Calcul moins lourd
         return (x*x) + (y*y);
     }
 
