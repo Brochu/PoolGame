@@ -122,7 +122,7 @@ function Ball(posX, posY, num)
         }
     }
 }
-Ball.RADIUS = 18;
+Ball.RADIUS = 17;
 Ball.colors = [['#FFF', '#FFF'],
 			   ['#F2C103', '#F2C103'],
 			   ['#041171', '#041171'],
