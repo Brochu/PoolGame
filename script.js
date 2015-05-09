@@ -16,6 +16,7 @@ vrefmag = vref.magnitude();
 ballz = [];
 moving = [];
 
+// Prochaine étape : Calculer la force de frappe ! Avec une jauge qui se remplie quand on clique. Le bâton recule quand on clique.
 
 function init()
 {
@@ -85,6 +86,7 @@ function drawStick()
     // Transformations pour dessiner le baton a la bonne place
     ctx.translate(ballx, bally);
     ctx.rotate(theta);
+	// MAGIC NUMBER. 30 correspond à la distance entre la balle et le bâton
     ctx.translate(30, (-0.5 * stickWidth));
 
     ctx.beginPath();
