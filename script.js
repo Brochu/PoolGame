@@ -17,6 +17,8 @@ ballz = [];
 moving = [];
 
 // Prochaine étape : Calculer la force de frappe ! Avec une jauge qui se remplie quand on clique. Le bâton recule quand on clique.
+preparingShot = false;
+shotPower = -1;
 
 function init()
 {
@@ -30,6 +32,9 @@ function init()
     }
 
     myCanva.addEventListener('mousemove', updateMousePos, false);
+
+    myCanva.addEventListener('mousedown', startHit, false);
+    myCanva.addEventListener('mouseup', stopHit, false);
 
     // TODO: Separer la logique de mise a jour physique vs. redessiner le canvas
     update();
@@ -46,6 +51,17 @@ function updateMousePos(e)
     // console.log(mouseX + ' , ' + mouseY);
 }
 
+function startHit(e)
+{
+    preparingShot = true;
+}
+
+function stopHit(e)
+{
+    preparingShot = false;
+    shotPower = -1;
+}
+
 function update()
 {
     drawTable();
@@ -53,6 +69,16 @@ function update()
     // To be replaced by function drawBallz
     ballz[0].draw(ctx);
     drawStick();
+
+    if (preparingShot)
+    {
+        updatePower();
+    }
+}
+
+function updatePower()
+{
+    shotPower++;
 }
 
 function drawTable()
@@ -87,7 +113,8 @@ function drawStick()
     ctx.translate(ballx, bally);
     ctx.rotate(theta);
 	// MAGIC NUMBER. 30 correspond à la distance entre la balle et le bâton
-    ctx.translate(30, (-0.5 * stickWidth));
+        // Temporaire seulement
+    ctx.translate(30 + shotPower, (-0.5 * stickWidth));
 
     ctx.beginPath();
     ctx.rect(0, 0, stickLength, stickWidth);
