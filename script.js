@@ -1,8 +1,9 @@
 window.onload = init;
+
 myCanva = document.getElementById('myCanva');
 canvaPos = $(myCanva).offset();
-console.log(canvaPos);
 ctx = myCanva.getContext("2d");
+
 tableHeight = 500;
 tableWidth = 500;
 
@@ -10,11 +11,14 @@ mouseX = -1;
 mouseY = -1;
 vref = new Vector(-10,0);
 vrefmag = vref.magnitude();
+physicsUpdateRate = 16;
 
 // Ajouter une table qui penche AWW YEAH (possibilite de flipper)
 // wtf xD, a quoi on pensait ??!
 ballz = [];
 moving = [];
+
+wallz = [];
 
 // Prochaine étape : Calculer la force de frappe ! Avec une jauge qui se remplie quand on clique. Le bâton recule quand on clique.
 preparingShot = false;
@@ -38,11 +42,17 @@ function init()
     ballz[0] = new Ball(250, 250, 0);
     for(var x = 1; x <= 15; x++)
     {
-	    var randX = (Math.random() * 460) + 20;
-	    var randY = (Math.random() * 460) + 20;
+        var randX = (Math.random() * 460) + 20;
+        var randY = (Math.random() * 460) + 20;
 
     	ballz[x] = new Ball(randX, randY, x);
     }
+
+    // Pour l'instant on a 4 murs hard coded
+    wallz.push([20,0,460,20]); // Horizontal, up
+    wallz.push([20,480,460,20]); // Horizontal, down
+    wallz.push([0,20,20,460]); // Vertical, left
+    wallz.push([480,20,20,460]); // Vertical, right
 
     myCanva.addEventListener('mousemove', updateMousePos, false);
 
@@ -50,7 +60,10 @@ function init()
     myCanva.addEventListener('mouseup', stopHit, false);
 
     // TODO: Separer la logique de mise a jour physique vs. redessiner le canvas
-    update();
+    redraw();
+
+    updatePhysics();
+    setInterval(updatePhysics, physicsUpdateRate);
 }
 
 function updateMousePos(e)
@@ -67,18 +80,23 @@ function startHit(e)
 function stopHit(e)
 {
     preparingShot = false;
+
+    // TODO: Add force to ballz[0]
     shotPower = -1;
 }
 
-function update()
+function redraw()
 {
     // Faire une requete pour le prochain appel de mise a jour de l'ecran
-    requestAnimFrame(update);
+    requestAnimFrame(redraw);
 
     drawTable();
     drawBallz();
     drawStick();
+}
 
+function updatePhysics()
+{
     if (preparingShot)
     {
         updatePower();
@@ -87,7 +105,10 @@ function update()
 
 function updatePower()
 {
-    shotPower++;
+    if (shotPower < maxPower)
+    {
+        shotPower++;
+    }
 }
 
 function drawTable()
@@ -96,6 +117,14 @@ function drawTable()
     ctx.rect(0, 0, 500, 500);
     ctx.fillStyle = '#008833'
     ctx.fill();
+
+    for (w in wallz)
+    {
+        ctx.beginPath();
+        ctx.rect(wallz[w][0], wallz[w][1], wallz[w][2], wallz[w][3]);
+        ctx.fillStyle = '#800000'
+        ctx.fill();
+    }
 }
 
 function drawBallz()
