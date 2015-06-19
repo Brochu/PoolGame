@@ -74,6 +74,7 @@ function updateMousePos(e)
 
 function startHit(e)
 {
+    shotPower = 1;
     preparingShot = true;
 }
 
@@ -81,7 +82,8 @@ function stopHit(e)
 {
     preparingShot = false;
 
-    // TODO: Add force to ballz[0]
+    // This needs to be modified depending on shotPower var
+    moving.push([0, [60,60]]);
     shotPower = -1;
 }
 
@@ -97,6 +99,22 @@ function redraw()
 
 function updatePhysics()
 {
+    // Loop a travers de larray moving, et faire bouger les boules qui ont une vitesse
+    // On doit aussi determiner les balles qui terminent leur mouvement
+    // Principe simple en ce moment ...
+    for (b in moving)
+    {
+        ballIdx = moving[b][0]
+        speed = moving[b][1]
+        moving.splice(ballIdx, 1);
+
+        speed = [speed[0] - 1, speed[1] - 1];
+        if (speed[0] != 0 || speed[1] != 0)
+        {
+            moving.push([ballIdx, speed]);
+        }
+    }
+
     if (preparingShot)
     {
         updatePower();
@@ -135,6 +153,8 @@ function drawBallz()
 function drawStick()
 {
     if (mouseX == -1 || mouseY == -1)
+        return
+    if (moving.length != 0)
         return
 
     stickWidth = 10;
