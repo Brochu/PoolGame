@@ -19,6 +19,19 @@ moving = [];
 // Prochaine étape : Calculer la force de frappe ! Avec une jauge qui se remplie quand on clique. Le bâton recule quand on clique.
 preparingShot = false;
 shotPower = -1;
+maxPower = 60;
+distWBall = 30;
+
+// Code emprunte pour obtenir la fonction RequestAnimationFrame pour tous les browsers
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+// Fin (source: http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/)
 
 function init()
 {
@@ -38,17 +51,12 @@ function init()
 
     // TODO: Separer la logique de mise a jour physique vs. redessiner le canvas
     update();
-    setInterval(update, 10);
 }
 
 function updateMousePos(e)
 {
-	// Offset fonctionne pas dans Firefox
-    /*mouseX = e.offsetX;
-    mouseY = e.offsetY;*/
-	mouseX = e.pageX - canvaPos.left;
+    mouseX = e.pageX - canvaPos.left;
     mouseY = e.pageY - canvaPos.top;
-    // console.log(mouseX + ' , ' + mouseY);
 }
 
 function startHit(e)
@@ -64,10 +72,11 @@ function stopHit(e)
 
 function update()
 {
-    drawTable();
+    // Faire une requete pour le prochain appel de mise a jour de l'ecran
+    requestAnimFrame(update);
 
-    // To be replaced by function drawBallz
-    ballz[0].draw(ctx);
+    drawTable();
+    drawBallz();
     drawStick();
 
     if (preparingShot)
@@ -83,10 +92,15 @@ function updatePower()
 
 function drawTable()
 {
-	ctx.beginPath();
-	ctx.rect(0, 0, 500, 500);
-	ctx.fillStyle = '#008833'
-	ctx.fill();
+    ctx.beginPath();
+    ctx.rect(0, 0, 500, 500);
+    ctx.fillStyle = '#008833'
+    ctx.fill();
+}
+
+function drawBallz()
+{
+    ballz[0].draw(ctx);
 }
 
 function drawStick()
@@ -101,27 +115,30 @@ function drawStick()
     ballx = ballz[0].pos.x;
     bally = ballz[0].pos.y;
 	
-	// Position de la balle - position de la souris
+    // Position de la balle - position de la souris
     v = ballz[0].pos.sub(new Vector(mouseX, mouseY));
-	// Trouver l'angle du vecteur à partir d'un vecteur de référence
+
+    // Trouver l'angle du vecteur à partir d'un vecteur de référence
     theta = Math.acos(v.dotProduct(vref) / (v.magnitude() * vrefmag));
-	// Flipper l'angle du vecteur
+
+    // Flipper l'angle du vecteur
     if (mouseY < bally)
         theta = -theta;
 
     // Transformations pour dessiner le baton a la bonne place
     ctx.translate(ballx, bally);
     ctx.rotate(theta);
-	// MAGIC NUMBER. 30 correspond à la distance entre la balle et le bâton
-        // Temporaire seulement
-    ctx.translate(30 + shotPower, (-0.5 * stickWidth));
+
+    // MAGIC NUMBER. 30 correspond à la distance entre la balle et le bâton
+    // Temporaire seulement
+    ctx.translate(distWBall + shotPower, (-0.5 * stickWidth));
 
     ctx.beginPath();
     ctx.rect(0, 0, stickLength, stickWidth);
     ctx.fillStyle = '#333333'
     ctx.fill();
 	
-	// Remet le canvas à sa position initiale
+    // Remet le canvas à sa position initiale
     ctx.setTransform(1,0,0,1,0,0);
 }
 
